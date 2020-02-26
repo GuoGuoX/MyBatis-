@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatis.dao.UserMapperPlus">
+    <select id="selectUserById" resultType="mybatis.bean.User">
+        select * from mybatis where id = #{id}
+    </select>
+
+    <!-- 级联查询：级联属性封装结果集 -->
+    <resultMap id="userMap" type="mybatis.bean.User">
+        <id column="id" property="id"></id>
+        <result column="user_name" property="userName"></result>
+        <result column="age" property="age"></result>
+        <result column="gender" property="gender"></result>
+        <result column="d_id" property="dId"></result>
+        <!-- association:可以指定联合的javabean对象
+               property：指定哪个属性是联合对象
+               javaType：指定联合对象对应的哪个javabean
+         -->
+        <association property="dept" javaType="mybatis.bean.Dept">
+            <result column="did" property="id"></result>
+            <result column="dept_name" property="deptName"></result>
+        </association>
+    </resultMap>
+    <select id="selectUserMap" resultMap="userMap">
+        SELECT m.id id,m.user_name user_name,m.age age,m.gender gender,m.d_id d_id,d.id dId ,d.dept_name dept_name
+        FROM
+            mybatis m ,
+            dept d
+        WHERE
+            m.d_id = d.id
+        AND
+            m.id = #{id};
+    </select>
+
+    <resultMap id="myMapStep" type="mybatis.bean.User">
+        <id column="id" property="id"></id>
+        <result column="user_name" property="userName"></result>
+        <result column="age" property="age"></result>
+        <result column="gender" property="gender"></result>
+        <result column="d_id" property="dId"></result>
+        <association property="dept" select="mybatis.dao.DeptMapper.selectDeptById" column="d_id">
+        </association>
+    </resultMap>
+    <select id="selectUserMapStep" resultMap="myMapStep">
+        select * from mybatis where id = #{id}
+    </select>
+
+    <select id="selectUserByDid" resultType="mybatis.bean.User">
+        select * from mybatis where d_id = #{did}
+    </select>
+
+    <!-- 鉴别器 discriminator
+        需求:从查询到的结果中进行判断,进而决定下一步操作
+    -->
+    <resultMap id="disc" type="mybatis.bean.User">
+        <id column="id" property="id"></id>
+        <result column="user_name" property="userName"></result>
+        <result column="age" property="age"></result>
+        <result column="gender" property="gender"></result>
+        <discriminator javaType="string" column="gender">
+            <!-- 表示女生 -->
+            <case value="0"  resultType="mybatis.bean.User">
+                <association property="dept" select="mybatis.dao.DeptMapper.selectDeptAndUsersStep" column="d_id">
+                    <id column="id" property="id"></id>
+                    <result column="dept_name" property="deptName"></result>
+                </association>
+            </case>
+            <!-- 表示男生 -->
+            <case value="1" resultType="mybatis.bean.User">
+                <id column="id" property="id"></id>
+                <result column="user_name" property="userName"></result>
+                <result column="gender" property="age"></result>
+                <result column="gender" property="gender"></result>
+            </case>
+        </discriminator>
+    </resultMap>
+    <select id="selectUserByIdDis" resultMap="disc">
+        select * from mybatis where id = #{id}
+    </select>
+
+
+</mapper>

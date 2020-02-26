@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatis.SSM.dao.UserMapper">
+    <select id="selectUserById" resultType="SSM.SSM.bean.User">
+        select * from mybatis where id = #{id}
+    </select>
+    <delete id="deleteUserById" parameterType="SSM.SSM.bean.User">
+        delete from mybatis where id = #{id}
+    </delete>
+    <update id="updateUserById" >
+        update mybatis
+        set user_Name=#{userName},age=#{age},gender=#{gender}
+        where id = #{id}
+    </update>
+    <!--
+        useGeneratedKeys="true":开启获取自增主键策略
+        keyProperty:获取自增主键的值,将值赋值到javaBean中
+    -->
+    <insert id="insertUser" parameterType="SSM.SSM.bean.User"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into mybatis values(#{id},#{userName},#{age},#{gender})
+    </insert>
+
+    <select id="selectUserByIdAndLastName" resultType="SSM.SSM.bean.User">
+        select * from mybatis where id = #{0} and user_Name = #{1}
+    </select>
+
+
+    <select id="selectUserByLastName" resultType="SSM.SSM.bean.User">
+        select * from mybatis where user_name like #{lastName}
+    </select>
+
+    <!-- //查询结果map 字段名为key，字段值为value  {gender=0, user_name=张三, id=1, age=19} -->
+    <select id="selectUserMapByLastName" resultType="map">
+        select * from mybatis where user_name = #{lastName}
+    </select>
+
+    <!-- //查询结果map 主键字段为key，User为value
+       {16=User{id=16, userName='王五', age=23, gender=0}, 17=User{id=17, userName='王五', age=23, gender=0},
+       -->
+    <select id="selectUserMapLikeByLastName" resultType="SSM.SSM.bean.User">
+        select * from mybatis where user_name like #{lastName}
+    </select>
+</mapper>

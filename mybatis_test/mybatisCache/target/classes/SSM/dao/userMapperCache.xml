@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="SSM.dao.UserMapperCache">
+    <cache  eviction="FIFO" flushInterval="60000" readOnly="false"
+            size="1024" type="org.mybatis.caches.ehcache.EhcacheCache"></cache>
+    <select id="selectUserById" resultType="SSM.bean.User">
+        select *from mybatis where id = #{id}
+    </select>
+
+    <update id="updateUserByUser" parameterType="SSM.bean.User">
+        update mybatis
+        set
+            user_name = #{userName},age = #{age},gender = #{gender}
+        where id = #{id}
+    </update>
+
+</mapper>

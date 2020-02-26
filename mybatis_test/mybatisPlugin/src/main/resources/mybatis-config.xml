@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="conf.properties"></properties>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="aggressiveLazyLoading" value="true"></setting>
+        <setting name="cacheEnabled" value="true"></setting>
+    </settings>
+    <plugins>
+        <!--<plugin interceptor="interceptor.MyFirstPluginInterceptor"></plugin>
+        <plugin interceptor="interceptor.MyTwoPluginInterceptor"></plugin>-->
+    </plugins>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <!-- sql映射注册 必须接口和xml文件在同一个目录 -->
+        <package name="mybatisPlugin.dao"></package>
+    </mappers>
+
+</configuration>

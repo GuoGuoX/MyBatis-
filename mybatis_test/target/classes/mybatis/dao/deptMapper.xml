@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatis.dao.DeptMapper">
+    <select id="selectDeptById" resultType="mybatis.bean.Dept">
+        select * from dept where id = #{id}
+    </select>
+
+    <!-- 多对一
+
+SELECT d.id dId ,d.dept_name dept_name,m.id m_id,m.user_name user_name,m.age age,m.gender gender,m.d_id d_id
+FROM
+	dept d
+LEFT JOIN
+	mybatis m
+ON
+	d.id = m.d_id
+WHERE
+	d.id = 2;
+    -->
+    <resultMap id="deptAndUsers" type="mybatis.bean.Dept">
+        <id column="dId" property="id"></id>
+        <result column="dept_name" property="deptName"></result>
+        <!--
+            collection定义关联集合类型的属性的封装规则
+            ofType：指定集合里面元素的类型
+         -->
+        <!--<collection property="users"  ofType="mybatis.bean.User" >
+            <id column="m_id" property="id"></id>
+            <result column="user_name" property="userName"></result>
+            <result column="age" property="age"></result>
+            <result column="gender" property="gender"></result>
+            <result column="d_id" property="dId"></result>
+        </collection>-->
+        <!--
+            使用collection标签分步查询关联集合
+        -->
+        <collection property="users" select="mybatis.dao.UserMapperPlus.selectUserByDid"
+                    column="dId"></collection>
+    </resultMap>
+    <select id="selectDeptAndUsers" resultMap="deptAndUsers">
+        SELECT d.id dId ,d.dept_name dept_name,m.id m_id,m.user_name user_name,m.age age,m.gender gender,m.d_id d_id
+        FROM
+        dept d
+        LEFT JOIN
+        mybatis m
+        ON
+        d.id = m.d_id
+        WHERE
+        d.id = #{id};
+    </select>
+
+
+    <!-- 分步查询 -->
+    <resultMap id="deptUserStep" type="mybatis.bean.Dept">
+        <id column="id" property="id"></id>
+        <result column="dept_name" property="deptName"></result>
+        <!-- 将多列的值传递过去。将多列的值封装map传递
+            column={key1=column1,key2=column2} -->
+        <collection property="users" select="mybatis.dao.UserMapperPlus.selectUserByDid"
+                    column="{did=id}"></collection>
+    </resultMap>
+    <select id="selectDeptAndUsersStep" resultMap="deptUserStep">
+        select id,dept_name from dept d where id = #{id}
+    </select>
+</mapper>

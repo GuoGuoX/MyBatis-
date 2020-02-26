@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatisPlugin.dao.UserMapperPlugin">
+
+    <select id="selectUserById" resultType="mybatisPlugin.bean.User">
+        select *from mybatis where id = #{id}
+    </select>
+
+    <update id="updateUserByUser" parameterType="mybatisPlugin.bean.User">
+        update mybatis
+        set
+            user_name = #{userName},age = #{age},gender = #{gender}
+        where id = #{id}
+    </update>
+
+</mapper>

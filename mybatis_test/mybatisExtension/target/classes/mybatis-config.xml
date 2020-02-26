@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="conf.properties"></properties>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="aggressiveLazyLoading" value="true"></setting>
+        <setting name="cacheEnabled" value="true"></setting>
+    </settings>
+    <!--配置枚举类型处理器（TypeHandler的实现类）-->
+    <typeHandlers>
+        <!--指定自定义类型处理器-->
+        <typeHandler handler="mybatisExtension.myTypeHandler.MyEnumTypeHandler" javaType="mybatisExtension.util.EmpStatus"></typeHandler>
+        <!--<typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="mybatisExtension.util.EmpStatus"></typeHandler>-->
+       <!-- <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="mybatisExtension.util.EmpStatus"></typeHandler>-->
+    </typeHandlers>
+    <plugins>
+        <!--<plugin interceptor="interceptor.MyFirstPluginInterceptor"></plugin>
+        <plugin interceptor="interceptor.MyTwoPluginInterceptor"></plugin>-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+    <environments default="my_sql">
+        <environment id="my_sql">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+        <environment id="my_oracle">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <!--
+                    oracle.driver = oracle.jdbc.OracleDriver
+                    oracle.url = jdbc:oracle:thin:@192.168.154.128:1521/orcl
+                    oracle.user = scott
+                    oracle.password = tiger
+                -->
+
+                <property name="driver" value="${oracle.driver}"/>
+                <property name="url" value="${oracle.url}"/>
+                <property name="username" value="${oracle.user}"/>
+                <property name="password" value="${oracle.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <!-- sql映射注册 必须接口和xml文件在同一个目录 -->
+        <package name="mybatisExtension.dao"></package>
+    </mappers>
+
+</configuration>

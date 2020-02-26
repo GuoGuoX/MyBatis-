@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatisExtension.dao.UserMapperExtension">
+
+    <select id="selectUserById"  resultType="mybatisExtension.bean.User"  >
+        select * from mybatis where id = #{id}
+    </select>
+
+    <select id="selectUsers" resultType="mybatisExtension.bean.User">
+        select * from mybatis
+    </select>
+
+    <insert id="addUser" parameterType="mybatisExtension.bean.User" useGeneratedKeys="true" keyProperty="id">
+        insert into mybatis(user_name,age,gender,d_id,empStatus) values(#{userName},#{age},#{gender},#{dId},#{empStatus})
+    </insert>
+
+    <!--statementType="CALLABLE"显示指定表示调用存储过程-->
+    <select id="getUserByOracleProcedure"  statementType="CALLABLE">
+        {call hello_procedure (
+            #{start,mode=IN,jdbcType=INTEGER},
+            #{end,mode=IN,jdbcType=INTEGER},
+            #{count,mode=OUT,jdbcType=INTEGER},
+            #{emps,mode=OUT,jdbcType=CURSOR,javaType=ResultSet,resultMap=oracleProcedure}
+        )}
+    </select>
+    <!--
+    private Integer empNo;
+    private String eName;
+    private Integer sal;
+    private Integer annal;
+    private String dName;
+    -->
+    <resultMap id="oracleProcedure" type="mybatisExtension.bean.Empinfo">
+        <id column="empNo" property="empNo"></id>
+        <result column="eName" property="eName"></result>
+        <result column="sal" property="sal"></result>
+        <result column="annal" property="annal"></result>
+        <result column="dName" property="dName"></result>
+    </resultMap>
+
+</mapper>

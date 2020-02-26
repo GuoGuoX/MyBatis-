@@ -1,0 +1,4 @@
+SSM\controller\UserController.class
+SSM\bean\Dept.class
+SSM\dao\UserMapperSSM.class
+SSM\bean\User.class

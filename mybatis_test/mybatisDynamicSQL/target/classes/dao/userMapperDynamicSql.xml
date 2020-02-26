@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="dao.UserMapperDynamicSQL">
+    
+
+
+    <!-- 动态sql_if判断 -->
+    <select id="selectUserByUser"  resultType="bean.User"  parameterType="bean.User" >
+        select * from mybatis
+        <!--  <where>对拼接语句中的and或or前缀自动添加或删除 -->
+        <!--<where>-->
+        <!-- trim  prefix:前缀  prefixOverrides：覆盖前缀
+        suffix：后缀   suffixOverrides：覆盖后缀-->
+        <trim prefix="where" prefixOverrides="and">
+        <!-- choose：只拼接第一个条件成立的sql语句 -->
+        <choose >
+            <when test="id!=null">
+                id = #{id}
+            </when>
+            <when test="userName!=null and userName!=''">
+                and user_name = #{userName}
+            </when>
+            <when test="age!=null">
+                and age = #{age}
+            </when>
+            <when test="gender==0 or gender ==1">
+                and gender = #{gender}
+            </when>
+
+        </choose>
+
+       <!-- <if test="id!=null">
+            id = #{id}
+        </if>
+        <if test="userName!=null and userName!=''">
+            and user_name = #{userName}
+        </if>
+        <if test="age!=null">
+            and age = #{age}
+        </if>
+        <if test="gender==0 or gender ==1">
+            and gender = #{gender}
+        </if>-->
+            <!-- </where>-->
+    </trim>
+    </select>
+
+    <!--updateUserByUser-->
+    <update id="updateUserByUser" parameterType="bean.User" >
+        update mybatis
+        <!-- set:用于修改操作时的逗号分割处理 -->
+        <set>
+            <if test="userName!=null and userName!=''">
+                user_name = #{userName},
+            </if>
+            <if test="age!=null">
+                age = #{age},
+            </if>
+            <if test="gender==0 or gender ==1">
+                gender = #{gender}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    
+    <select id="selectUserByUserByForeach"  resultType="bean.User">
+        select *from mybatis where id in
+        <!-- foreach
+            collection:指定要遍历的集合
+                list类型的参数会特殊处理封装在map中，map的key就叫list
+                item：将当前遍历出的元素赋值给指定的变量
+                separator：每个元素之间的分隔符
+                open：遍历出所有结果拼接一个开始的字符
+                close：遍历出所有结构后拼接一个结束的字符
+         -->
+        <foreach collection="integerList" item="is" separator="," open="(" close=")">
+            #{is}
+        </foreach>
+    </select>
+
+    <!-- 使用foreach批量添加 -->
+    <insert id="insertListUser" parameterType="bean.User">
+        insert into mybatis(user_name,age,gender,d_id)
+        values
+        <foreach collection="users" item="user" separator=",">
+        <trim prefix="(" suffix=")">
+            <if test="user.userName!=null and user.userName!=''">
+                 #{user.userName},
+            </if>
+            <if test="user.age!=null">
+                 #{user.age},
+            </if>
+            <if test="user.gender==0 or user.gender ==1">
+                 #{user.gender},
+            </if>
+            <if test="user.dId!=null">
+                 #{user.dId}
+            </if>
+        </trim>
+        </foreach>
+    </insert>
+</mapper>
